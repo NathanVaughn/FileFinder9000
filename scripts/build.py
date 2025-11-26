@@ -12,7 +12,7 @@ subprocess.run(
         # "--onefile",
         "--noconsole",
         "--icon=images/icon.ico",
-        "--add-data=images/icon.ico;images/icon.ico",
+        f"--add-data=images/icon.ico{os.pathsep}images/icon.ico",
         "--noconfirm",
         "main.py",
     ]
