@@ -16,10 +16,7 @@
     dependencies = []
 
 [dependency-groups]
-    dev = [
-        "pre-commit>=3.2.0",
-        "pyinstaller>=6.17.0",
-]
+    dev = ["pillow>=11.3.0", "pre-commit>=3.2.0", "pyinstaller>=6.17.0"]
 
 [project.urls]
     Homepage   = "https://github.com/NathanVaughn/FileFinder9000"

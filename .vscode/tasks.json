@@ -13,7 +13,7 @@
         },
         {
             "label": "build",
-            "command": "uv build",
+            "command": "uv run scripts/build.py",
             "type": "shell"
         }
     ]

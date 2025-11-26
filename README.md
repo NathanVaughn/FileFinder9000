@@ -6,6 +6,16 @@
 
 ---
 
+This is a simple tool to take a `.csv` export from
+[Everything](https://www.voidtools.com/) and bulk search various terms. This tool
+will return a .`json` or `.csv` file of the results. By using `.csv` files
+from Everything, the Everything SDK does not need to be installed.
+
+This tool is useful if you have a list of old documents you are trying
+to locate on a file server or something.
+
+![Application window](images/Screenshot.png)
+
 ## Development
 
 Use the provided [devcontainer](https://containers.dev/)

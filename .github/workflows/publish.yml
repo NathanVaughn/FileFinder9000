@@ -1,0 +1,58 @@
+name: PyPi Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+      id-token: write
+      attestations: write
+
+    if: "${{ !contains(github.event.head_commit.message, 'ci skip') }}"
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          prune-cache: false
+          cache-python: true
+          ignore-nothing-to-cache: true
+
+      - name: Install vscode-task-runner
+        run: uv tool install vscode-task-runner
+
+      - name: Build
+        run: vtr build
+
+      - name: Get version
+        id: project
+        shell: bash
+        run: echo "version=$(uv version --short)" >> $GITHUB_OUTPUT
+
+      - name: Create tag
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          custom_tag: ${{ steps.project.outputs.version }}
+          github_token: ${{ github.token }}
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.project.outputs.version }}
+          files: dist/**
+
+      - name: Create Attestation
+        id: attest
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: dist/**
