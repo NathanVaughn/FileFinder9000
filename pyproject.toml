@@ -1,0 +1,54 @@
+[project]
+    name = "TODOPROJECTNAME"
+    version = "0.1.0"
+    description = "TODODESC"
+    readme = "README.md"
+    authors = [{ name = "TODONAME", email = "TODO@EMAIL.com" }]
+    classifiers = [
+        "License :: OSI Approved :: MIT License",
+        # TODO verify versions
+        # should remove if not library
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+    ]
+    requires-python = ">=3.9"
+    dependencies = []
+
+[dependency-groups]
+    dev = [
+        "pre-commit>=3.2.0",
+        "pytest>=8.3.3",
+        "pytest-cov>=5.0.0",
+    ]
+
+[project.urls]
+    Homepage   = "https://github.com/TODOUSER/TODOREPO"
+    Repository = "https://github.com/TODOUSER/TODOREPO.git"
+    Issues     = "https://github.com/TODOUSER/TODOREPO/issues"
+
+[tool.coverage.run]
+    omit = ["tests/*"]
+
+[tool.pyright]
+    pythonVersion              = "3.9" # set to lowest supported version
+    pythonPlatform             = "All"
+    # TODO best to remove above if not library
+    typeCheckingMode           = "standard"
+    venvPath                   = "."
+    venv                       = ".venv"
+    reportMissingParameterType = true
+
+[tool.ruff.lint.flake8-tidy-imports]
+    ban-relative-imports = "all"
+
+# TODO: cam be deleted if not package
+# Uncomment if package
+# [tool.uv.build-backend]
+#     module-root = ""
+
+# [build-system]
+#     requires      = ["uv_build>=0.7.15"]
+#     build-backend = "uv_build"

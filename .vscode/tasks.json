@@ -1,0 +1,26 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "install-pre-commit",
+            "command": "uv run pre-commit install",
+            "type": "shell"
+        },
+        {
+            "label": "pre-commit",
+            "command": "uv run pre-commit run --all-files",
+            "type": "shell"
+        },
+        {
+            "label": "tests",
+            "command": "uv run pytest --cov=TODO/ --cov-report html",
+            "type": "shell"
+        },
+        {
+            // TODO: can be deleted if not package
+            "label": "build",
+            "command": "uv build",
+            "type": "shell"
+        }
+    ]
+}
