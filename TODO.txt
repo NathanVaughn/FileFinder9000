@@ -1,4 +1,0 @@
-1. Replace items starting with TODO
-2. Allow Actions to create pull requests in this repo
-3. Run `uv lock`
-4. Delete this file

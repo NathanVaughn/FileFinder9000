@@ -12,12 +12,6 @@
             "type": "shell"
         },
         {
-            "label": "tests",
-            "command": "uv run pytest --cov=TODO/ --cov-report html",
-            "type": "shell"
-        },
-        {
-            // TODO: can be deleted if not package
             "label": "build",
             "command": "uv build",
             "type": "shell"
