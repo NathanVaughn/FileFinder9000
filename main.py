@@ -2,6 +2,7 @@ import csv
 import json
 import os
 import sys
+import platform
 import threading
 import tkinter as tk
 from dataclasses import asdict, dataclass
@@ -45,7 +46,7 @@ class Results:
         """
         Get CSV field names for writing.
         """
-        return ["Search Term", "Full Path", "Size"]
+        return ["Search Term", "Name", "Path", "Full Path", "Size"]
 
     def as_csv_rows(self) -> list[dict[str, str]]:
         """
@@ -58,6 +59,8 @@ class Results:
                 rows.append(
                     {
                         "Search Term": term,
+                        "Name": f.name,
+                        "Path": f.path,
                         "Full Path": f.full_path,
                         "Size": str(f.size),
                     }
@@ -69,9 +72,11 @@ class FileFinderWindow:
     def __init__(self, root: tk.Tk):
         self.root = root
         self.root.title("File Finder 9000")
-        self.root.iconbitmap(os.path.join(images_dir, "icon.ico"))
         self.root.geometry("500x450")
         root.resizable(True, False)
+
+        if platform.system() == "Windows":
+            self.root.iconbitmap(os.path.join(images_dir, "icon.ico"))
 
         # Variables
         self.everything_file_path = tk.StringVar()
