@@ -1,8 +1,9 @@
 import csv
 import json
 import os
-import sys
 import platform
+import shutil
+import sys
 import threading
 import tkinter as tk
 from dataclasses import asdict, dataclass
@@ -185,7 +186,15 @@ class FileFinderWindow:
             command=lambda: self.save_results("json"),
             state=tk.DISABLED,
         )
-        self.btn_save_json.pack(side=tk.RIGHT, padx=5, expand=True, fill=tk.X)
+        self.btn_save_json.pack(side=tk.LEFT, padx=5, expand=True, fill=tk.X)
+
+        self.btn_copy_files = ttk.Button(
+            frame_export,
+            text="Copy Files",
+            command=self.copy_result_files,
+            state=tk.DISABLED,
+        )
+        self.btn_copy_files.pack(side=tk.RIGHT, padx=5, expand=True, fill=tk.X)
 
     # --- File Dialog Helpers ---
     def browse_everything_file(self) -> None:
@@ -369,6 +378,7 @@ class FileFinderWindow:
 
         self.btn_save_csv.config(state=tk.DISABLED)  # Always disable save until done
         self.btn_save_json.config(state=tk.DISABLED)
+        self.btn_copy_files.config(state=tk.DISABLED)
 
     def search_complete(self, success: bool, message: str) -> None:
         """
@@ -385,6 +395,7 @@ class FileFinderWindow:
                 if self._results and self._results.total_files > 0:
                     self.btn_save_csv.config(state=tk.NORMAL)
                     self.btn_save_json.config(state=tk.NORMAL)
+                    self.btn_copy_files.config(state=tk.NORMAL)
                 else:
                     messagebox.showinfo("Result", "No matches found.")
             else:
@@ -431,6 +442,38 @@ class FileFinderWindow:
                     messagebox.showinfo("Success", "Saved successfully!")
                 except Exception as e:
                     messagebox.showerror("Error", f"Failed to save: {e}")
+
+    def copy_result_files(self) -> None:
+        """
+        Copy found files to a selected directory.
+        """
+        if not self._results or self._results.total_files == 0:
+            messagebox.showinfo("Info", "No files to copy.")
+            return
+
+        dest_dir = filedialog.askdirectory()
+        if not dest_dir:
+            return
+
+        total_files = self._results.total_files
+        self.toggle_inputs(False)
+        self.update_status("Copying files...")
+
+        try:
+            count = 0
+            for term, files in self._results.terms.items():
+                for i, f in enumerate(files):
+                    count += 1
+                    self.update_progress(count, total_files)
+
+                    dest_path = os.path.join(dest_dir, f"{term}_{i}_{f.name}")
+                    shutil.copy2(f.full_path, dest_path)
+
+            messagebox.showinfo("Success", "Files copied successfully!")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to copy files: {e}")
+        finally:
+            self.toggle_inputs(True)
 
 
 if __name__ == "__main__":

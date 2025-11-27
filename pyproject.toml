@@ -1,6 +1,6 @@
 [project]
     name = "FileFinder9000"
-    version = "0.1.1"
+    version = "0.1.2"
     description = "Perform bulk searches for files using Everything csv exports."
     readme = "README.md"
     authors = [{ name = "Nathan Vaughn", email = "nath@nvaughn.email" }]
