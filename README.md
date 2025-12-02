@@ -24,6 +24,5 @@ or run the following for local development:
 ```bash
 # Install uv
 # https://docs.astral.sh/uv/getting-started/installation/
-uv tool install vscode-task-runner
-vtr install
+uv run main.py
 ```

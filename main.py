@@ -49,6 +49,13 @@ class Results:
         """
         return ["Search Term", "Name", "Path", "Full Path", "Size"]
 
+    @property
+    def filenames(self) -> list[str]:
+        """
+        Get a list of all unique filenames in the results.
+        """
+        return list({f.name for files in self.terms.values() for f in files})
+
     def as_csv_rows(self) -> list[dict[str, str]]:
         """
         Convert results to a list of dictionaries for CSV writing.
@@ -456,17 +463,29 @@ class FileFinderWindow:
             return
 
         total_files = self._results.total_files
+        file_duplicates = {name: 0 for name in self._results.filenames}
+
         self.toggle_inputs(False)
         self.update_status("Copying files...")
 
         try:
-            count = 0
-            for term, files in self._results.terms.items():
-                for i, f in enumerate(files):
-                    count += 1
-                    self.update_progress(count, total_files)
+            file_count = 0
+            for files in self._results.terms.values():
+                for f in files:
+                    file_count += 1
+                    self.update_progress(file_count, total_files)
 
-                    dest_path = os.path.join(dest_dir, f"{term}_{i}_{f.name}")
+                    dest_path = os.path.join(dest_dir, f.name)
+
+                    # handle name collisions
+                    if os.path.exists(dest_path):
+                        file_duplicates[f.name] += 1
+                        base, ext = os.path.splitext(f.name)
+                        # add a suffix before the extension
+                        dest_path = os.path.join(
+                            dest_dir, f"{base}_{file_duplicates[f.name]}{ext}"
+                        )
+
                     shutil.copy2(f.full_path, dest_path)
 
             messagebox.showinfo("Success", "Files copied successfully!")
