@@ -244,7 +244,8 @@ class FileFinderWindow:
             return
 
         # Disable buttons during search
-        self.toggle_inputs(False)
+        self.disable_search_button()
+        self.disable_export_buttons()
         self._results = None
 
         # Start thread
@@ -261,7 +262,7 @@ class FileFinderWindow:
             terms_path = self.search_terms_path.get()
 
             # Load Everything CSV
-            self.update_progress(0, 100)  # placeholder to reset progress bar
+            self.reset_progress()
 
             # Count total lines for progress bar (First Pass)
             self.update_status("Counting rows in CSV...")
@@ -367,6 +368,7 @@ class FileFinderWindow:
         Update status message in a thread-safe manner.
         """
         self.root.after(0, lambda: self.status_msg.set(message))
+        self.root.update()
 
     def update_progress(self, current: int, total: int) -> None:
         """
@@ -375,17 +377,41 @@ class FileFinderWindow:
         if total > 0:
             perc = (current / total) * 100
             self.root.after(0, lambda: self.progress.configure(value=perc))
+            self.root.update()
 
-    def toggle_inputs(self, enable: bool) -> None:
+    def reset_progress(self) -> None:
         """
-        Enable or disable input buttons.
+        Reset the progress bar.
         """
-        state = tk.NORMAL if enable else tk.DISABLED
-        self.btn_search.config(state=state)
+        self.update_progress(0, 100)
 
-        self.btn_save_csv.config(state=tk.DISABLED)  # Always disable save until done
+    def disable_export_buttons(self) -> None:
+        """
+        Disable export buttons.
+        """
+        self.btn_save_csv.config(state=tk.DISABLED)
         self.btn_save_json.config(state=tk.DISABLED)
         self.btn_copy_files.config(state=tk.DISABLED)
+
+    def enable_export_buttons(self) -> None:
+        """
+        Enable export buttons.
+        """
+        self.btn_save_csv.config(state=tk.NORMAL)
+        self.btn_save_json.config(state=tk.NORMAL)
+        self.btn_copy_files.config(state=tk.NORMAL)
+
+    def disable_search_button(self) -> None:
+        """
+        Disable searct button.
+        """
+        self.btn_search.config(state=tk.DISABLED)
+
+    def enable_search_button(self) -> None:
+        """
+        Enable search button.
+        """
+        self.btn_search.config(state=tk.NORMAL)
 
     def search_complete(self, success: bool, message: str) -> None:
         """
@@ -395,14 +421,12 @@ class FileFinderWindow:
         def _finish():
             self.progress.configure(value=100)
             self.status_msg.set(message)
-            self.toggle_inputs(True)
+            self.enable_search_button()
 
             if success:
                 # Enable save buttons if we have results
                 if self._results and self._results.total_files > 0:
-                    self.btn_save_csv.config(state=tk.NORMAL)
-                    self.btn_save_json.config(state=tk.NORMAL)
-                    self.btn_copy_files.config(state=tk.NORMAL)
+                    self.enable_export_buttons()
                 else:
                     messagebox.showinfo("Result", "No matches found.")
             else:
@@ -422,33 +446,37 @@ class FileFinderWindow:
             f_path = filedialog.asksaveasfilename(
                 defaultextension=".csv", filetypes=[("CSV Files", "*.csv")]
             )
-            if f_path:
-                try:
-                    with open(f_path, "w", encoding="utf-8") as f:
-                        writer = csv.DictWriter(
-                            f,
-                            lineterminator="\n",
-                            fieldnames=self._results.csv_fieldnames,
-                        )
-                        writer.writeheader()
-                        writer.writerows(self._results.as_csv_rows())
+            if not f_path:
+                return
 
-                    messagebox.showinfo("Success", "Saved successfully!")
-                except Exception as e:
-                    messagebox.showerror("Error", f"Failed to save: {e}")
+            try:
+                with open(f_path, "w", encoding="utf-8") as f:
+                    writer = csv.DictWriter(
+                        f,
+                        lineterminator="\n",
+                        fieldnames=self._results.csv_fieldnames,
+                    )
+                    writer.writeheader()
+                    writer.writerows(self._results.as_csv_rows())
+
+                messagebox.showinfo("Success", "Saved successfully!")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to save: {e}")
 
         elif file_type == "json":
             f_path = filedialog.asksaveasfilename(
                 defaultextension=".json", filetypes=[("JSON Files", "*.json")]
             )
-            if f_path:
-                try:
-                    with open(f_path, "w", encoding="utf-8") as f:
-                        json.dump(self._results.as_dict(), f, indent=4)
+            if not f_path:
+                return
 
-                    messagebox.showinfo("Success", "Saved successfully!")
-                except Exception as e:
-                    messagebox.showerror("Error", f"Failed to save: {e}")
+            try:
+                with open(f_path, "w", encoding="utf-8") as f:
+                    json.dump(self._results.as_dict(), f, indent=4)
+
+                messagebox.showinfo("Success", "Saved successfully!")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to save: {e}")
 
     def copy_result_files(self) -> None:
         """
@@ -465,7 +493,10 @@ class FileFinderWindow:
         total_files = self._results.total_files
         file_duplicates = {name: 0 for name in self._results.filenames}
 
-        self.toggle_inputs(False)
+        self.disable_search_button()
+        self.disable_export_buttons()
+
+        self.reset_progress()
         self.update_status("Copying files...")
 
         try:
@@ -488,11 +519,16 @@ class FileFinderWindow:
 
                     shutil.copy2(f.full_path, dest_path)
 
+            self.update_status("Files copied")
             messagebox.showinfo("Success", "Files copied successfully!")
+
         except Exception as e:
+            self.update_status("Files failed to copy")
             messagebox.showerror("Error", f"Failed to copy files: {e}")
+
         finally:
-            self.toggle_inputs(True)
+            self.enable_search_button()
+            self.enable_export_buttons()
 
 
 if __name__ == "__main__":
