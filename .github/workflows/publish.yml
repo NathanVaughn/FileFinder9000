@@ -53,6 +53,6 @@ jobs:
 
       - name: Create Attestation
         id: attest
-        uses: actions/attest-build-provenance@v3
+        uses: actions/attest@v4
         with:
           subject-path: dist/**
