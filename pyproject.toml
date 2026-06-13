@@ -16,18 +16,20 @@
     dependencies = []
 
 [dependency-groups]
-    dev = ["pillow>=11.3.0", "pre-commit>=3.2.0", "pyinstaller>=6.17.0"]
+    dev = [
+    "pillow>=11.3.0",
+    "prek>=0.4.4",
+    "pyinstaller>=6.17.0",
+]
 
 [project.urls]
     Homepage   = "https://github.com/NathanVaughn/FileFinder9000"
     Repository = "https://github.com/NathanVaughn/FileFinder9000.git"
     Issues     = "https://github.com/NathanVaughn/FileFinder9000/issues"
 
-[tool.pyright]
-    typeCheckingMode           = "standard"
-    venvPath                   = "."
-    venv                       = ".venv"
-    reportMissingParameterType = true
+[tool.ruff.lint]
+    select = ["E4", "E7", "E9", "F", "ANN"]
+    ignore = ["ANN401"]
 
 [tool.ruff.lint.flake8-tidy-imports]
     ban-relative-imports = "all"
