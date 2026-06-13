@@ -77,7 +77,7 @@ class Results:
 
 
 class FileFinderWindow:
-    def __init__(self, root: tk.Tk):
+    def __init__(self, root: tk.Tk) -> None:
         self.root = root
         self.root.title("File Finder 9000")
         self.root.geometry("500x450")
@@ -418,7 +418,7 @@ class FileFinderWindow:
         Handle search completion in a thread-safe manner.
         """
 
-        def _finish():
+        def _finish() -> None:
             self.progress.configure(value=100)
             self.status_msg.set(message)
             self.enable_search_button()

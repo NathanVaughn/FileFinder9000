@@ -32,5 +32,3 @@ shutil.make_archive(
     os.path.join("dist", f"{name}-{sys.platform}"), "zip", os.path.join("dist", name)
 )
 shutil.rmtree(os.path.join("dist", name))
-
-
