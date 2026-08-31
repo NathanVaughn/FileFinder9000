@@ -12,15 +12,11 @@
         "Programming Language :: Python :: 3.13",
         "Programming Language :: Python :: 3.14",
     ]
-    requires-python = ">=3.9"
+    requires-python = ">=3.14"
     dependencies = []
 
 [dependency-groups]
-    dev = [
-    "pillow>=11.3.0",
-    "prek>=0.4.4",
-    "pyinstaller>=6.17.0",
-]
+    dev = ["pillow>=11.3.0", "prek>=0.4.4", "pyinstaller>=6.17.0"]
 
 [project.urls]
     Homepage   = "https://github.com/NathanVaughn/FileFinder9000"
